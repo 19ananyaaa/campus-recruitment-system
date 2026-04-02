@@ -1,0 +1,383 @@
+/* Step 1: Import Google Fonts and Bootstrap icons for recruitment aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css');
+
+/* Global settings (Base layer setup) */
+body {
+    margin: 0; /* Ensures absolutely no random top gap */
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Base custom card - clean UI standard with soft shadow and rounded limits */
+.custom-card {
+    border: none;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.09) !important;
+}
+
+/* Base Buttons */
+.form-control, .btn, .form-select { border-radius: 8px; }
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    border: none;
+    box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0b5ed7, #0a53be);
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.4);
+}
+
+
+/* ========================================================== */
+/* TOP NAVIGATION HEADER SAAS */
+/* ========================================================== */
+.top-navbar {
+    background: #ffffff;
+    height: 60px; /* Proper height 50-60px */
+    
+    /* Step: align items properly */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    /* Subtle shadow & border */
+    border-bottom: 2px solid #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+    
+    /* Step: navbar ke upar ka extra gap hata rahe hain */
+    /* Step: full width alignment fix kar rahe hain */
+    margin: 0 -30px 30px -30px; /* margin-top is 0 */
+    padding: 10px 20px; /* Consistent padding 10-20px */
+    width: calc(100% + 60px); /* Strictly edge-to-edge horizontally */
+    
+    position: relative; /* Absolutely DO NOT MAKE STICKY */
+    z-index: 1000;
+}
+.profile-orb {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    display: flex; justify-content: center; align-items: center;
+    color: white; font-weight: bold; font-size: 1.2rem;
+}
+
+/* Base Gradient Card Logic */
+.gradient-card-1 { background: linear-gradient(135deg, #0d6efd, #0a53be); color: #fff; }
+.gradient-card-2 { background: linear-gradient(135deg, #17a2b8, #117a8b); color: #fff; }
+.gradient-card-3 { background: linear-gradient(135deg, #ffc107, #d39e00); color: #fff; }
+.gradient-card-4 { background: linear-gradient(135deg, #28a745, #1e7e34); color: #fff; }
+.gradient-card h2, .gradient-card p, .gradient-card span { color: #fff !important; }
+
+/* Admin Roles Styling Arrays */
+.job-admin-card {
+    background: #fff; border-left: 5px solid #0d6efd;
+    transition: 0.3s;
+}
+.job-admin-card:hover { border-left-color: #ffc107; transform: translateY(-3px); }
+
+
+/* ========================================================== */
+/* SIDEBAR & MAIN CONTENT LAYOUT SYSTEM */
+/* ========================================================== */
+
+.dashboard-wrapper { display: flex; width: 100%; height: 100vh; }
+
+.sidebar {
+    width: 260px; height: 100vh; background: #fff;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.05); position: fixed;
+    top: 0; left: 0; z-index: 1000; overflow-y: auto;
+    display: flex; flex-direction: column; transition: 0.3s;
+}
+
+.sidebar .brand-title {
+    padding: 24px; font-size: 1.4rem; font-weight: 800; color: #0d6efd;
+    text-align: center; border-bottom: 1px solid #f0f0f0; letter-spacing: -0.5px;
+}
+
+.sidebar-nav { display: flex; flex-direction: column; padding: 20px 15px; gap: 8px; }
+
+.sidebar-nav .nav-link {
+    display: flex; align-items: center; padding: 12px 18px; color: #555;
+    border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+
+.sidebar-nav .nav-link i { margin-right: 14px; font-size: 1.15rem; }
+.sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.active {
+    background: #0d6efd; color: #fff; box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+}
+
+.sidebar-footer { margin-top: auto; padding: 20px 15px; border-top: 1px solid #f0f0f0; }
+
+.main-content {
+    flex: 1; margin-left: 260px; padding: 0 30px 30px 30px; background: #f8f9fa; min-height: 100vh; transition: 0.3s;
+    min-width: 0; /* CRITICAL: Prevent flex limits ignoring viewport constraints */
+    overflow-x: hidden;
+}
+
+.content-section { display: none; width: 100%; animation: fadeIn 0.4s ease-in-out; }
+.content-section.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================================== */
+/* RESPONSIVE FLUID MEDIA QUERIES (MOBILE UI OVERRIDE) */
+/* ========================================================== */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 250px;
+        transition: transform 0.3s ease-in-out;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 10px 0 25px rgba(0,0,0,0.1) !important;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 0 15px 15px 15px; 
+        overflow-x: hidden; 
+        min-width: 0; 
+    }
+    /* Adapting Edge-to-Edge Static Top Navbar on smaller screens accurately! */
+    .top-navbar {
+        margin: 0 -15px 20px -15px;
+        padding: 10px 15px; /* retain height logic properly */
+        width: calc(100% + 30px);
+    }
+    .kanban-board {
+        flex-wrap: wrap; 
+        gap: 15px;
+        overflow-x: hidden !important; 
+    }
+    .kanban-col {
+        min-width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+
+/* ========================================================== */
+/* NEW KANBAN RECRUITMENT PIPELINE SAAS UI */
+/* ========================================================== */
+/* Step 1: pipeline container ko scrollable bana rahe hain */
+.kanban-board {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 20px;
+    gap: 15px;
+    align-items: flex-start;
+    
+    /* SaaS UX Scrollbar Config */
+    scrollbar-width: thin; 
+    scrollbar-color: #0d6efd #e9ecef;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    width: 100%;
+}
+.kanban-board:active { cursor: grabbing; }
+
+/* Custom Webkit scroll string format */
+.kanban-board::-webkit-scrollbar { height: 8px; }
+.kanban-board::-webkit-scrollbar-track { background: #e9ecef; border-radius: 4px; }
+.kanban-board::-webkit-scrollbar-thumb { background: #0d6efd; border-radius: 4px; }
+.kanban-board::-webkit-scrollbar-thumb:hover { background: #0b5ed7; }
+
+/* Base Column Framework */
+.kanban-col {
+    /* Step 2: har column ka width fix kar rahe hain taki shrink na ho */
+    min-width: 320px;
+    max-width: 320px;
+    flex-shrink: 0;
+    background: #f4f6f8;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 400px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.kanban-header {
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: linear-gradient(to bottom, #ffffff, #fafafa);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #495057;
+}
+
+.kanban-col[data-stage="Applied"] .kanban-header { border-top: 4px solid #adb5bd; }
+.kanban-col[data-stage="Screening"] .kanban-header { border-top: 4px solid #0dcaf0; }
+.kanban-col[data-stage="Interview"] .kanban-header { border-top: 4px solid #0d6efd; }
+.kanban-col[data-stage="Selected"] .kanban-header { border-top: 4px solid #198754; }
+.kanban-col[data-stage="Rejected"] .kanban-header { border-top: 4px solid #dc3545; }
+
+/* Dynamic Candidate Cards */
+.kanban-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.kanban-card:hover { transform: translateY(-4px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
+
+.kanban-card-title { font-size: 1rem; font-weight: 700; margin-bottom: 5px; color: #212529; }
+.kanban-card-email { font-size: 0.8rem; color: #6c757d; margin-bottom: 12px; display:flex; align-items:center; }
+.kanban-card-actions { 
+    display: flex; 
+    gap: 6px; 
+    flex-wrap: wrap; 
+    margin-top: 12px; 
+    border-top: 1px dashed #e9ecef; 
+    padding-top: 12px; 
+}
+
+
+/* ========================================================== */
+/* TIMELINE PROGRESS INDICATOR SYSTEM (APPLICATION TRACKING) */
+/* ========================================================== */
+
+.timeline-container {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: 25px 0 10px 0; position: relative; padding: 0 10px;
+}
+.timeline-container::before {
+    content: ''; position: absolute; top: 15px; left: 40px; right: 40px; height: 4px; background: #e9ecef; z-index: 1;
+}
+
+.timeline-step { position: relative; z-index: 2; text-align: center; flex: 1; }
+
+.timeline-icon {
+    width: 38px; height: 38px; border-radius: 50%; background: #e9ecef; color: #fff;
+    font-weight: bold; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px auto; border: 4px solid #fff; transition: 0.3s;
+}
+
+/* Color codes */
+.timeline-step.completed .timeline-icon { background: #198754; }
+.timeline-step.active .timeline-icon { background: #0d6efd; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.2); }
+.timeline-step.rejected .timeline-icon { background: #dc3545; }
+
+.timeline-text { font-size: 0.85rem; font-weight: 700; color: #6c757d; }
+.timeline-step.active .timeline-text { color: #0d6efd; }
+.timeline-step.completed .timeline-text { color: #198754; }
+.timeline-step.rejected .timeline-text { color: #dc3545; }
+
+
+/* ========================================================== */
+/* SAAS TOAST SYSTEM (Smooth floating confirmations) */
+/* ========================================================== */
+.saas-toast-container { position: fixed; bottom: 25px; right: 25px; z-index: 1100; pointer-events:none; }
+.saas-toast {
+    background: #fff;
+    border-left: 5px solid #198754;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 250px;
+    font-weight: 600;
+    color: #212529;
+    transform: translateY(150px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-top: 10px;
+}
+.saas-toast.show { transform: translateY(0); opacity: 1; }
+
+/* Legacy Notification fallback popup */
+.notification-popup {
+    position: fixed; top: 20px; right: -400px; z-index: 1060; width: 350px;
+    background: #fff; border-left: 5px solid #0d6efd; border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 20px;
+    transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.notification-popup.show { right: 20px; }
+
+
+/* ========================================================== */
+/* DARK MODE MODULE (Persistent injection map) */
+/* ========================================================== */
+
+body.dark-mode { background-color: #121212 !important; color: #e0e0e0; }
+
+body.dark-mode .sidebar { background-color: #1a1a1a; border-right: 1px solid #333; box-shadow: none; }
+body.dark-mode .sidebar-nav .nav-link { color: #aaa; }
+body.dark-mode .sidebar-nav .nav-link:hover, body.dark-mode .sidebar-nav .nav-link.active { background: #0d6efd; color: #fff; }
+body.dark-mode .sidebar-footer, body.dark-mode .sidebar .brand-title { border-color: #333; }
+body.dark-mode .main-content { background-color: #121212; }
+
+body.dark-mode .card, body.dark-mode .custom-card, body.dark-mode .modal-content {
+    background-color: #1e1e1e !important; color: #e0e0e0; border: 1px solid #333;
+}
+body.dark-mode .kanban-col { background: #1a1a1a; border: 1px solid #333; }
+body.dark-mode .kanban-header { background: #252525; color: #ccc; box-shadow:none; }
+body.dark-mode .kanban-card { background: #2a2a2a; border-color: #444; color: #eee; }
+body.dark-mode .kanban-card-title { color: #fff; }
+body.dark-mode .kanban-card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.4); }
+
+/* CRITICAL HIGH CONTRAST DARK MODE OVERRIDES */
+body.dark-mode .text-dark, 
+body.dark-mode .text-muted, 
+body.dark-mode p, 
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
+body.dark-mode .top-navbar span {
+    color: #e0e0e0 !important; 
+}
+body.dark-mode .bg-light, body.dark-mode .top-navbar { background-color: #2b2b2b !important; border-color: #444 !important; }
+body.dark-mode .text-primary { color: #6ea8fe !important; } /* Softer blue for dark */
+body.dark-mode .text-info { color: #6edff6 !important; }
+body.dark-mode .job-admin-card { background-color:#2a2a2a; color:#fff; }
+body.dark-mode .dropdown-menu { background-color: #2b2b2b; border-color: #444; }
+body.dark-mode .dropdown-item { color: #e0e0e0; }
+body.dark-mode .dropdown-item:hover { background-color: #333; }
+body.dark-mode .table, body.dark-mode .table-striped>tbody>tr:nth-of-type(odd)>* { background-color:#2a2a2a; color:#fff; }
+body.dark-mode .timeline-step.completed .timeline-text { color: #75b798 !important; }
+body.dark-mode .timeline-step.active .timeline-text { color: #6ea8fe !important; }
+
+body.dark-mode .saas-toast { background: #1e1e1e; color: #fff; border-left: 5px solid #198754; }
+body.dark-mode .notification-popup { background: #1e1e1e; color: #fff; border-left: 5px solid #0d6efd; }
+
+body.dark-mode .modal-header, body.dark-mode .modal-footer { border-color: #333; }
+body.dark-mode .form-control, body.dark-mode .form-select { background-color: #2b2b2b; border-color: #444; color: white; }
+body.dark-mode .form-control::placeholder { color: #bbb; }
+body.dark-mode .table, body.dark-mode .table-hover>tbody>tr:hover>* { background-color: #252525; color: #fff; border-color: #444; }
+
+/* ========================================================== */
+/* DYNAMIC RESOURCE CATEGORY BADGES */
+/* ========================================================== */
+.r-badge { font-weight: 700; padding: 6px 10px; border-radius: 6px; color: #fff !important; }
+.badge-resume { background-color: #0d6efd; border: 1px solid #0b5ed7; } /* Blue */
+.badge-coding { background-color: #6f42c1; border: 1px solid #59359a; } /* Purple */
+.badge-system { background-color: #198754; border: 1px solid #146c43; } /* Green */
+.badge-interview { background-color: #fd7e14; border: 1px solid #cc660f; } /* Orange */
+.badge-aptitude { background-color: #dc3545; border: 1px solid #b02a37; } /* Red */
+.badge-others { background-color: #6c757d; border: 1px solid #565e64; } /* Gray */
+
+/* Ensure hover state stays clean */
+.resource-card { transition: all 0.3s ease; }
+.resource-card:hover { border-left-width: 6px !important; }
+

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard Framework</title>
+    <!-- Bootstrap and Chart.js integrated for Analytics UI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+    <!-- Immediate SaaS DOM Override Logic -->
+    <script>
+        if (localStorage.getItem("darkMode") === "enabled") { document.body.classList.add("dark-mode"); }
+    </script>
+
+    <!-- Step 1: Secure Admin Sidebar Module -->
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand-title text-warning"><i class="bi bi-shield-lock"></i> Admin Panel</div>
+            <nav class="sidebar-nav">
+            <a class="nav-link active" onclick="switchSection('admin-dashboard', this)"><i class="bi bi-graph-up-arrow"></i> Macro View Analytics</a>
+            <a class="nav-link" onclick="switchSection('admin-jobs', this)"><i class="bi bi-plus-circle-fill"></i> Add Recruit Node</a>
+            <a class="nav-link" onclick="switchSection('admin-apps', this)"><i class="bi bi-kanban"></i> Recruitment Pipeline</a>
+            <a class="nav-link" onclick="switchSection('admin-events', this)"><i class="bi bi-calendar-event"></i> Build Events</a>
+            <a class="nav-link" onclick="switchSection('admin-resources', this)"><i class="bi bi-journal-code"></i> Upload Resources</a>
+            <hr class="text-muted w-100 my-1">
+        </nav>
+            <div class="sidebar-footer">
+                <!-- Step: 'Base UI Theme' ko 'Dark Mode' me replace kiya -->
+                <button id="darkModeBtn" class="btn btn-outline-secondary btn-sm w-100 mb-2"><i class="bi bi-moon"></i> Enable Dark Mode</button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content" id="main-content">
+            
+            <!-- Step: dashboard navbar add kar rahe hain (Admin) -->
+            <nav class="top-navbar bg-white border-bottom">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-primary d-md-none me-3" id="sidebarToggle"><i class="bi bi-list"></i></button>
+                    <span class="fs-4 fw-bold text-primary"><i class="bi bi-shield-shaded"></i> Global Root Access</span>
+                </div>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                        <span class="fw-bold me-3 d-none d-md-inline" id="topNavEmail">Administrator</span>
+                        <div class="profile-orb shadow-sm"><i class="bi bi-shield-lock"></i></div>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <!-- Step: 'Destroy Session' ko 'Logout' me replace kar rahe hain (Admin Root rule) -->
+                        <li><a class="dropdown-item fw-bold text-danger" href="#" id="logoutBtnTop"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div id="adminAlert" class="alert d-none"></div>
+            
+            <!-- SaaS Toast Layer Injection -->
+            <div id="toastContainer" class="saas-toast-container"></div>
+
+            <!-- SECTION 1: Admin Stats & Graphing Canvas -->
+            <section id="section-admin-dashboard" class="content-section active">
+                <div class="row mb-3">
+                    <div class="col-12 text-center">
+                        <h2>Analytics Dashboard</h2>
+                        <p class="text-muted">Real-time macro view of recruiting funnels.</p>
+                    </div>
+                </div>
+                
+                <!-- NEW SaaS KPI CARDS -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card shadow-sm border-0 custom-card p-3 text-center h-100">
+                            <h2 class="text-primary fw-bold mb-0" id="kpiTotalJobs">0</h2>
+                            <span class="text-muted small fw-bold text-uppercase">Total Jobs</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card shadow-sm border-0 custom-card p-3 text-center h-100">
+                            <h2 class="text-info fw-bold mb-0" id="kpiTotalApps">0</h2>
+                            <span class="text-muted small fw-bold text-uppercase">Total Applications</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card shadow-sm border-0 custom-card p-3 text-center h-100">
+                            <h2 class="text-warning fw-bold mb-0" id="kpiShortlisted">0</h2>
+                            <span class="text-muted small fw-bold text-uppercase">Shortlisted (Pipeline)</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card shadow-sm border-0 custom-card p-3 text-center h-100">
+                            <h2 class="text-success fw-bold mb-0" id="kpiHiringRate">0%</h2>
+                            <span class="text-muted small fw-bold text-uppercase">Hiring Return Rate</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow p-4 custom-card h-100">
+                            <h5 class="mb-3 text-center fw-bold">Applications Per Job Metric</h5>
+                            <div style="position: relative; height:300px; width:100%">
+                                <canvas id="applicationsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow p-4 custom-card h-100">
+                            <h5 class="mb-3 text-center fw-bold">Total Conversion Phase (Funnel)</h5>
+                            <div style="position: relative; height:300px; width:100%">
+                                <canvas id="conversionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Advanced Job Configurator (Includes Delete Feature)-->
+            <section id="section-admin-jobs" class="content-section">
+                <h2>Manage Campus Job Infrastructure</h2>
+                <div class="row mt-4">
+                    <div class="col-lg-5 mb-4">
+                        <div class="card shadow p-4 custom-card">
+                            <h5 class="mb-3 fw-bold border-bottom pb-2">Draft Detailed Opportunity</h5>
+                            <form id="addOpportunityForm">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Job Title</label>
+                                    <input type="text" id="jobTitle" class="form-control" placeholder="e.g. SDE-1 / Data Analyst" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Corporate Entity</label>
+                                    <input type="text" id="companyName" class="form-control" placeholder="e.g. Google India" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Job Description</label>
+                                    <textarea id="jobDescription" class="form-control" rows="3" placeholder="Key responsibilities and expected deliverables..." required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Eligibility Target Map</label>
+                                    <textarea id="jobEligibility" class="form-control" rows="2" placeholder="Strictly CGPA > 8.0, Branch: Computer Science" required></textarea>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-primary">Base Location</label>
+                                        <input type="text" id="jobLocation" class="form-control" placeholder="e.g. Bangalore" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold text-primary">Salary / Stipend</label>
+                                        <input type="text" id="jobSalary" class="form-control" placeholder="e.g. 15 LPA / 30k PM" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Role Type Structure</label>
+                                    <select id="jobType" class="form-select" required>
+                                        <option value="Full-time">Full-time Corporate</option>
+                                        <option value="Internship">Internship</option>
+                                        <option value="Remote">Fully Remote</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 fw-bold mt-2 py-2">Broadcast Global Opportunity <i class="bi bi-broadcast ms-1"></i></button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7 mb-4">
+                        <div class="card shadow p-4 custom-card h-100 border-0 bg-transparent shadow-none" style="box-shadow: none !important; background: transparent !important;">
+                            <h5 class="mb-3 fw-bold border-bottom pb-2">Active Broadcasting Directory</h5>
+                            
+                            <!-- Step: admin broadcast jobs grid map kar rahe hain -->
+                            <div class="row" id="activeJobsGrid">
+                                <div class="col-12 text-center text-muted py-5 mt-3 opacity-50 border border-dashed rounded bg-light">
+                                    Nothing here yet! Start exploring 🚀
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Deep File Screening & Kanban Recruiter Hub -->
+            <section id="section-admin-apps" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">Live Candidate Screening Pipeline</h2>
+                    <!-- Step 3: Arrow buttons map loop for manual sliding logic -->
+                    <div>
+                        <button class="btn btn-outline-secondary shadow-sm px-3" onclick="scrollKanban(-350)"><i class="bi bi-chevron-left"></i></button>
+                        <button class="btn btn-primary shadow-sm px-3 ms-1" onclick="scrollKanban(350)"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="kanban-board border-0" id="kanbanBoardWrapper">
+                    
+                    <div class="kanban-col" data-stage="Applied" id="col-Applied">
+                        <div class="kanban-header">📥 Applied <span class="badge bg-secondary rounded-pill" id="badge-Applied">0</span></div>
+                        <div class="kanban-cards-container" id="cards-Applied"></div>
+                    </div>
+                    
+                    <div class="kanban-col" data-stage="Screening" id="col-Screening">
+                        <div class="kanban-header">🔍 Screening <span class="badge bg-info rounded-pill" id="badge-Screening">0</span></div>
+                        <div class="kanban-cards-container" id="cards-Screening"></div>
+                    </div>
+                    
+                    <div class="kanban-col" data-stage="Interview" id="col-Interview">
+                        <div class="kanban-header">🗣️ Interview <span class="badge bg-primary rounded-pill" id="badge-Interview">0</span></div>
+                        <div class="kanban-cards-container" id="cards-Interview"></div>
+                    </div>
+                    
+                    <div class="kanban-col" data-stage="Selected" id="col-Selected">
+                        <div class="kanban-header">🏆 Selected <span class="badge bg-success rounded-pill" id="badge-Selected">0</span></div>
+                        <div class="kanban-cards-container" id="cards-Selected"></div>
+                    </div>
+                    
+                    <div class="kanban-col" data-stage="Rejected" id="col-Rejected">
+                        <div class="kanban-header">🛑 Rejected <span class="badge bg-danger rounded-pill" id="badge-Rejected">0</span></div>
+                        <div class="kanban-cards-container" id="cards-Rejected"></div>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- SECTION 4: Configure Events Pipeline -->
+            <section id="section-admin-events" class="content-section">
+                <h2 class="mb-4">Initialize Campus Event Nodes</h2>
+                <div class="row">
+                    <!-- Event Builder Widget -->
+                    <div class="col-lg-5 mb-4">
+                        <div class="card shadow-sm custom-card p-4 border-0 h-100">
+                            <form id="addEventForm">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Event Title Vector</label>
+                                    <input type="text" id="eventName" class="form-control" placeholder="e.g. Code Hackathon 2026" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Execution Date</label>
+                                    <input type="date" id="eventDate" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Core Requirements Log</label>
+                                    <textarea id="eventDescription" class="form-control" rows="4" placeholder="Brief outline defining parameters and tracking elements bound securely..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-auto"><i class="bi bi-lightning-fill"></i> Force Event Launch</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Student Enrollment Tracking Panel -->
+                    <div class="col-lg-7 mb-4">
+                        <div class="card shadow-sm custom-card p-4 border-0 h-100">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-info"></i> Global Enrollment Monitor</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped align-middle">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Event Target</th>
+                                            <th>Student Mapping</th>
+                                            <th>Initialization Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="enrolledStudentsTableBody">
+                                        <!-- Enrolled logic arrays populate securely here -->
+                                        <tr><td colspan="3" class="text-center text-muted small py-3">Loading student bounds...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Admin Specific Event Deletion Grid -->
+                <!-- Step: admin ke liye events list show kar rahe hain -->
+                <h5 class="mt-2 mb-3 fw-bold border-bottom pb-2">All Events Uploaded</h5>
+                <div class="row" id="adminEventsGrid">
+                    <div class="col-12 text-center text-muted py-4 mt-2 opacity-50 border border-dashed rounded bg-light">
+                        Loading event nodes natively...
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SECTION 5: Add Reference Materials -->
+            <section id="section-admin-resources" class="content-section">
+                <h2 class="mb-4">Push Global Reference Mapping</h2>
+                <div class="row">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="card shadow custom-card p-4 border-0">
+                            <form id="addResourceForm">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">Resource Title Log</label>
+                                    <input type="text" id="resourceTitle" class="form-control" placeholder="e.g. Master Interview Prep Guide" required>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label fw-bold text-primary mb-0">Document Target Type</label>
+                                        <button type="button" class="btn btn-sm btn-outline-primary shadow-sm rounded-pill" onclick="new bootstrap.Modal(document.getElementById('addCategoryModal')).show();">
+                                            <i class="bi bi-plus-circle"></i> Add Category
+                                        </button>
+                                    </div>
+                                    <select id="resourceCategory" class="form-select" required>
+                                        <option value="" disabled selected>Loading categories...</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-primary">HTTP Routing Link</label>
+                                    <input type="url" id="resourceLink" class="form-control" placeholder="e.g. https://github.com/... " required>
+                                </div>
+                                <button type="submit" class="btn btn-info text-dark w-100 fw-bold py-2 shadow-sm"><i class="bi bi-cloud-upload-fill"></i> Commit Resource Globally</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Admin Specific Resources Deletion Grid -->
+                <h5 class="mt-5 mb-3 fw-bold border-bottom pb-2">All Resources Uploaded</h5>
+                <div class="row" id="adminResourcesGrid">
+                    <div class="col-12 text-center text-muted py-4 mt-2 opacity-50 border border-dashed rounded bg-light">
+                        Loading stored resources logically...
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Step 2: Complex Interview Mode Scheduler Modal Popover -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-success">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-success"><i class="bi bi-calendar-check-fill"></i> Execute Scheduler Override</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="scheduleForm">
+                        <input type="hidden" id="schedAppId">
+                        
+                        <div class="alert alert-success small mb-3">
+                            Setting up a session automatically promotes candidate phase to <strong class="text-uppercase">Shortlisted</strong> and pushes alert notifications natively to their dashboard.
+                        </div>
+                        
+                        <div class="mb-3 d-flex gap-2">
+                            <div class="w-50">
+                                <label class="form-label fw-bold">Set Calendar Date</label>
+                                <input type="date" class="form-control" id="schedDate" required>
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label fw-bold">Set Block Time</label>
+                                <input type="time" class="form-control" id="schedTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Interview Vector Mode</label>
+                            <select class="form-select" id="schedMode">
+                                <option value="Online (Google Meet/Teams / Zoom)">Remote Link Sequence</option>
+                                <option value="Offline (Campus Interview Wing)">Campus Wing Offline</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Custom Recruiter Briefing Details</label>
+                            <textarea class="form-control" id="schedMessage" rows="3" placeholder="Attach Google meet links or bring official government ID requirements..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-2">Shortlist Phase Execution</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Step 3: Admin Strict Read-Only Candidate Profile Modal (NO EDITS PERMITTED) -->
+    <div class="modal fade" id="profileViewerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-person-bounding-box text-info"></i> Candidate Deep Scan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="text-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center shadow-sm" style="width:70px; height:70px; font-size: 30px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <h5 class="fw-bold mt-3 mb-0" id="scanEmailAddress">Loading...</h5>
+                        <span class="badge bg-success mt-1 shadow-sm"><i class="bi bi-patch-check-fill"></i> Verified Student</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Technical Proficiencies</label>
+                        <textarea id="scanTechnicalSkills" class="form-control bg-white" rows="2" readonly></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted text-uppercase">Academic Metric (CGPA)</label>
+                        <input type="text" id="scanCgpa" class="form-control bg-white" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary w-100 fw-bold shadow-sm" data-bs-dismiss="modal">Close Overlay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Job Modal -->
+    <div class="modal fade" id="editJobModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-primary">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-pencil-square"></i> Modify Opportunity</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editJobForm">
+                        <input type="hidden" id="editJobId">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Job Title</label>
+                            <input type="text" id="editJobTitle" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Corporate Entity</label>
+                            <input type="text" id="editJobCompany" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Job Description</label>
+                            <textarea id="editJobDescription" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Eligibility</label>
+                            <textarea id="editJobEligibility" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Location</label>
+                                <input type="text" id="editJobLocation" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Salary</label>
+                                <input type="text" id="editJobSalary" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Role Type</label>
+                            <select id="editJobType" class="form-select" required>
+                                <option value="Full-time">Full-time Corporate</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Remote">Fully Remote</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">Commit Edit Globally</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Category Addition Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-primary shadow-lg">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-tag-fill"></i> New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted text-uppercase">Category Definition</label>
+                            <input type="text" id="newCategoryName" class="form-control bg-light" placeholder="e.g. Data Structures" required>
+                        </div>
+                        <button type="submit" id="addCategorySubmitBtn" class="btn btn-primary w-100 fw-bold py-2 shadow-sm">Save Route</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- Lock screen fallback trigger -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if(localStorage.getItem("userRole") !== "admin") {
+                window.location.href = "index.html"; 
+            }
+            if(document.getElementById('topNavEmail')) { document.getElementById('topNavEmail').innerText = localStorage.getItem("userEmail") || "Administrator"; }
+            loadAdminData(); // Initial tree logic start
+        });
+    </script>
+</body>
+</html>
