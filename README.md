@@ -2,8 +2,7 @@
 
 ## 📌 Overview
 
-Campus Recruitment System ek full-stack web application hai jo campus placement process ko digital aur efficient banata hai.
-Is system me students jobs ke liye apply kar sakte hain, events me enroll kar sakte hain aur resources access kar sakte hain, jabki admin poore recruitment process ko manage karta hai.
+Campus Recruitment System is a full-stack web application designed to streamline and digitize the campus placement process. The system allows students to apply for job opportunities, enroll in recruitment events, and access placement resources, while providing administrators with a centralized platform to efficiently manage the entire recruitment process.
 
 ---
 
