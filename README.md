@@ -63,69 +63,6 @@ Campus/
 └── uploads/
 ```
 
----
-
-## ⚙️ Installation & Setup
-
-### 1️⃣ Clone Repository
-
-```
-git clone https://github.com/your-username/campus-recruitment-system.git
-cd campus-recruitment-system
-```
-
----
-
-### 2️⃣ Setup XAMPP
-
-* Install XAMPP
-* Start **Apache** and **MySQL**
-
----
-
-### 3️⃣ Move Project
-
-Project ko move karo:
-
-```
-C:\xampp\htdocs\
-```
-
----
-
-### 4️⃣ Setup Database
-
-* Open **phpMyAdmin**
-* Create database (e.g., `campus_db`)
-* Import `schema.sql`
-
----
-
-### 5️⃣ Configure Database
-
-`db.php` file me credentials update karo:
-
-```php
-$conn = mysqli_connect("localhost", "root", "", "campus_db");
-```
-
----
-
-### 6️⃣ Run Project
-
-Browser me open karo:
-
-```
-http://localhost/Campus/
-```
-
----
-
-## 📸 Screenshots
-
-(Add screenshots yaha for better presentation)
-
----
 
 ## 🔐 Key Functionalities
 
@@ -144,22 +81,3 @@ http://localhost/Campus/
 * Email notifications
 * Mobile responsive improvements
 * Advanced analytics dashboard
-
----
-
-## 👩‍💻 Author
-
-**Ananya Agarwal**
-B.Tech CSE (Core)
-
----
-
-## ⭐ GitHub Repository
-
-👉 https://github.com/your-username/campus-recruitment-system
-
----
-
-## 📌 Note
-
-This project is developed for academic purposes and can be extended for real-world recruitment systems.
